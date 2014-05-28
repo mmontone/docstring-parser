@@ -7,6 +7,11 @@ Ideas
   - Lightweight/readable wiki-like syntax
   - Verbose/explicit syntax
 - Extensible
+- Emacs lisp-mode extension for docstring parsing and formatting. Docstrings could be parsed when the option is enabled. 
+  When the user has not entered a character in the docstring space (to modify it), show the formatted docstring.
+  If the user is trying to modify the docstring, show the docstring source, unformatted, for editing.
+  This could be done automatically, or with a key binding if the user doesn't like it.
+
 
 Syntax overview:
 ----------------
