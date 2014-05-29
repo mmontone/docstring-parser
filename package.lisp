@@ -1,5 +1,5 @@
 ;;;; package.lisp
 
 (defpackage #:docstring-parser
-  (:use #:cl))
+  (:use #:cl #:esrap #:alexandria))
 
