@@ -50,7 +50,17 @@
   options)
 
 (defun print-docstring-options-element (elem stream depth)
-  (format stream "!~{~A~^; ~}" (docstring-options-element-options elem)))	  
+  (format stream "!~{~A~^; ~}" (docstring-options-element-options elem)))
+
+(defstruct (ref-element
+	     (:print-function print-ref-element))
+  name
+  type)
+
+(defun print-ref-element (elem stream depth)
+  (format stream "~A" (string-upcase (ref-element-name elem)))
+  (when (ref-element-type elem)
+    (format stream " (~A)" (ref-element-type elem))))
 
 (defun concat-inbetween-text (things)
   (let ((result nil))
@@ -81,14 +91,16 @@
 
 (defrule eol #\NewLine)
 
+(defrule eof (! (characterp character)))
+
 (defrule blank #\  )
 
 (defrule tab #\Tab)
 
-(defrule spacing (* (or blank tab))
+(defrule spacing (* (or blank tab eof))
   (:text t))
 
-(defrule spacing* (* (or eol blank tab))
+(defrule spacing* (* (or eol blank tab eof))
   (:text t))
 
 (defrule letter
@@ -96,7 +108,9 @@
 		      (#\A #\Z)
 		      (#\0 #\9)))
 
-(defrule word (+ (not (or blank tab eol)))
+(defrule word (and
+	       (+ (not (or blank tab eol eof)))
+	       (& (or blank tab eol eof)))
   (:text t))
 
 (defrule list-element (and eol (+ (and list-item (? eol))))
@@ -178,3 +192,30 @@
   (:function (lambda (match)
 	       (make-docstring-options-element :options
 					       (mapcar #'second (nth 1 match))))))
+
+(defrule upcase-character (not (or blank tab eol
+				   (character-ranges (#\a #\z)))))
+
+(defrule upcase-word (and (+ upcase-character) (& (or tab blank eol eof)))
+  (:text t))
+
+(defrule reference (or upcase-word
+		       (and #\` reference-text #\`
+			    (? (and
+				spacing #\( spacing
+				reference-type
+				spacing #\)))))
+  (:function
+   (lambda (match)
+     (if (stringp match)
+	 (make-ref-element :name match)
+	 (let ((name (second match))
+	       (type (nth 3 (nth 3 match))))
+	   (make-ref-element :name name
+			     :type type))))))
+  
+(defrule reference-text (+ (not #\`))
+  (:text t))
+
+(defrule reference-type (+ (not (or tab blank eol #\))))
+  (:text t))
