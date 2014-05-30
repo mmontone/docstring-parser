@@ -35,6 +35,23 @@
 (defun print-code-element (elem stream depth)
   (format stream "``~A``" (code-element-text elem)))
 
+(defstruct (docstring-option-element
+	     (:print-function print-docstring-option-element))
+  name
+  value)
+
+(defun print-docstring-option-element (elem stream depth)
+  (format stream "~A:~A"
+	  (docstring-option-element-name elem)
+	  (docstring-option-element-value elem)))
+
+(defstruct (docstring-options-element
+	     (:print-function print-docstring-options-element))
+  options)
+
+(defun print-docstring-options-element (elem stream depth)
+  (format stream "!~{~A~^; ~}" (docstring-options-element-options elem)))	  
+
 (defun concat-inbetween-text (things)
   (let ((result nil))
     (loop for thing in things
@@ -141,3 +158,23 @@
 	(and spacing* markup-element)
 	(and spacing* word))
   (:function normalize-markup-text))
+
+(defrule docstring-option-name (+ (not (or #\: #\; blank tab eol)))
+  (:text t))
+
+(defrule docstring-option-value (+ (not (or #\: #\; blank tab eol)))
+  (:text t))
+
+(defrule docstring-option (or (and docstring-option-name spacing #\: spacing docstring-option-value)
+			      docstring-option-name)
+
+  (:function (lambda (match)
+	       (if (listp match)
+		   (make-docstring-option-element :name (first match)
+						  :value (nth 4 match))
+		   (make-docstring-option-element :name match)))))
+
+(defrule docstring-options (and #\! (+ (and spacing docstring-option spacing #\;)))
+  (:function (lambda (match)
+	       (make-docstring-options-element :options
+					       (mapcar #'second (nth 1 match))))))

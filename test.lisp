@@ -172,6 +172,28 @@ italic")))
 	     (docstring-parser::make-bold-element :text "code"))
        :test #'equalp)))
 
+(deftest docstring-options-test ()
+  (is
+   (equalp
+    (let ((text "my-option:true"))
+      (parse 'docstring-parser::docstring-option text))
+    (docstring-parser::make-docstring-option-element :name "my-option"
+						     :value "true")))
+
+  (is (equalp
+       (parse 'docstring-parser::docstring-option "lisp")
+       (docstring-parser::make-docstring-option-element :name "lisp")))
+
+  (is (equalp
+       (parse 'docstring-parser::docstring-options "!opt1: value1; opt2: value2;")
+       (docstring-parser::make-docstring-options-element
+	:options (list (docstring-parser::make-docstring-option-element
+			:name "opt1"
+			:value "value1")
+		       (docstring-parser::make-docstring-option-element
+			:name "opt2"
+			:value "value2"))))))
+
 (deftest output-normalization-test ()
 
   (is
