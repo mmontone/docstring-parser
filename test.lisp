@@ -148,8 +148,29 @@ italic")))
     (parse 'docstring-parser::list-element list)))
 
 (deftest markup-text-test ()
-  (let ((text "this is a **test**"))
-    (parse 'docstring-parser::markup-text text))
+  (is (tree-equal
+       (let ((text "this is a **test**"))
+	 (parse 'docstring-parser::markup-text text))
+       (list "this is a " (docstring-parser::make-bold-element :text "test"))
+       :test #'equalp))
+
+  (is (tree-equal
+       (let ((text "this is a //super// **test**"))
+	 (parse 'docstring-parser::markup-text text))
+       (list "this is a "
+	     (docstring-parser::make-italic-element :text "super")
+	     " "
+	     (docstring-parser::make-bold-element :text "test"))
+       :test #'equalp))
+
+  (is (tree-equal
+       (let ((text "this ``is a //super// **test**`` of **code**"))
+	 (parse 'docstring-parser::markup-text text))
+       (list "this "
+	     (docstring-parser::make-code-element :text "is a //super// **test**")
+	     " of "
+	     (docstring-parser::make-bold-element :text "code"))
+       :test #'equalp)))
 
 (deftest output-normalization-test ()
 
