@@ -66,8 +66,24 @@
 (defrule code-text (* (not (and #\` #\`)))
   (:text t))
 
+(defrule bold-element (and #\* #\* bold-element-text #\* #\*)
+  (:function (lambda (match)
+	       (list :bold (nth 2 match)))))
+
+(defrule bold-element-text (* (not (and #\* #\*)))
+  (:text t))
+
+(defrule italic-element (and #\/ #\/ italic-element-text #\/ #\/)
+  (:function (lambda (match)
+	       (list :italic (nth 2 match)))))
+
+(defrule italic-element-text (* (not (and #\/ #\/)))
+  (:text t))
+
 (defrule markup-element (or list-element
-			    code-element))
+			    code-element
+			    bold-element
+			    italic-element))
 
 (defrule text-line (+ (and spacing word spacing))
   (:text t))

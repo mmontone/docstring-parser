@@ -89,6 +89,38 @@
                              (print x))``"))
     (parse 'docstring-parser::code-element code-element)))
 
+(deftest bold-test ()
+  (is
+   (equalp
+    (let ((bold-element "**this is bold**"))
+      (parse 'docstring-parser::bold-element bold-element))
+    '(:bold "this is bold")))
+  (is
+   (equalp
+    (let ((bold-element "**this is
+bold**"))
+      (parse 'docstring-parser::bold-element bold-element))
+    '(:bold "this is
+bold")))
+  )
+
+(deftest italic-test ()
+  (is
+   (equalp
+    (let ((italic-element "//this is italic//"))
+      (parse 'docstring-parser::italic-element italic-element))
+    '(:italic "this is italic")))
+  (is
+   (equalp
+    (let ((italic-element "//this is
+italic//"))
+      (parse 'docstring-parser::italic-element italic-element))
+    '(:italic "this is
+italic")))
+  (signals error
+    (parse 'docstring-parser::italic-element "//asdf"))
+  )
+
 (deftest list-test ()
 
   (let ((list-item "* my item"))
