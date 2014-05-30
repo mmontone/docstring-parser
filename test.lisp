@@ -50,6 +50,8 @@
 (let ((word "**-asdf_%asdf"))
   (parse 'docstring-parser::word word))
 
+;; Text
+
 (let ((text "asdf asdf; hdsf"))
   (parse 'docstring-parser::text text))
 
@@ -59,7 +61,13 @@
 (let ((text " asdfasdf
               asdfas"))
   (signals error
-    (parse 'docstring-parser::text-line text-line)))
+    (parse 'docstring-parser::text-line text)))
+
+(let ((text " asdfasdf
+              asdfas"))
+  (parse 'docstring-parser::text text))
+
+;; Code
 
 (let ((code-element "``(+ 2 `(print ,'asdf))``"))
   (parse 'docstring-parser::code-element code-element))
@@ -67,6 +75,8 @@
 (let ((code-element "``(let ((x 22))
                              (print x))``"))
   (parse 'docstring-parser::code-element code-element))
+
+;; Lists
 
 (let ((list-item "* my item"))
   (parse 'docstring-parser::list-item list-item))

@@ -72,6 +72,9 @@
 (defrule text-line (+ (and spacing word spacing))
   (:text t))
 
+(defrule text (+ (and spacing* word spacing*))
+  (:text t))
+
 (defrule markup-text-line (or (and spacing markup-element spacing markup-text-line)
 			      (and spacing word  spacing markup-text-line)
 			      (and spacing markup-element)
