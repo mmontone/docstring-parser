@@ -147,6 +147,10 @@ italic")))
              * third * third"))
     (parse 'docstring-parser::list-element list)))
 
+(deftest markup-text-test ()
+  (let ((text "this is a **test**"))
+    (parse 'docstring-parser::markup-text text))
+
 (deftest output-normalization-test ()
 
   (is
