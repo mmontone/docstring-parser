@@ -11,7 +11,7 @@
   (let ((newline "lala"))
     (parse 'docstring-parser::eol newline)))
 
-;; spaces
+;; spacing
 
 (let ((spaces "     "))
   (parse 'docstring-parser::spacing spaces))
@@ -24,7 +24,7 @@
                   "))
   (parse 'docstring-parser::spacing spaces)))
 
-;; spaces*
+;; spacing*
 
 (let ((spaces "     "))
   (parse 'docstring-parser::spacing* spaces))
@@ -34,11 +34,11 @@
 
 (let ((spaces "
                   "))
-  (parse 'docstring-parser::spacing spaces))
+  (parse 'docstring-parser::spacing* spaces))
 
-
-
-
+(signals error
+  (let ((text "    asfasdf  "))
+    (parse 'docstring-parser::spacing* text)))
 
 (let ((word "hello"))
   (parse 'docstring-parser::word word))
@@ -71,9 +71,29 @@
 (let ((list-item "* my item"))
   (parse 'docstring-parser::list-item list-item))
 
+(let ((list-item "* my item
+                    has lots of lines!!"))
+   (parse 'docstring-parser::list-item list-item))
+
+(let ((list-item "      * an item"))
+  (parse 'docstring-parser::list-item list-item))
+
+(let ((list-item "   * * an item"))
+  (parse 'docstring-parser::list-item list-item))
+
 (let ((list "* first item
              * second item"))
   (parse 'docstring-parser::list-element list))
+
+
+(let ((list "* first item
+               asdfasdfasdf
+               asdfasdfsf
+             * second item
+             * third * third"))
+  (parse 'docstring-parser::list-element list))
+
+;; Output normalization
 
 (is
  (equalp (docstring-parser::concat-inbetween-text '("foo" "bar"))
