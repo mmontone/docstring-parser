@@ -136,6 +136,9 @@ italic")))
   (let ((list-item "   * * an item"))
     (parse 'docstring-parser::list-item list-item))
 
+  (let ((list-item "* item with **markup** //baby//"))
+    (parse 'docstring-parser::list-item list-item))
+
   (let ((list "* first item
              * second item"))
     (parse 'docstring-parser::list-element list))
@@ -196,6 +199,7 @@ italic")))
 
 (deftest output-normalization-test ()
 
+  ;; Concat
   (is
    (equalp (docstring-parser::concat-inbetween-text '("foo" "bar"))
 	   (list "foobar")))
@@ -204,4 +208,23 @@ italic")))
 	      (list "foobar" '(:li "lala"))))
 
   (is (equalp (docstring-parser::concat-inbetween-text '("foo" (:li "lala") "bar" ))
-	      '("foo" (:li "lala") "bar" ))))
+	      '("foo" (:li "lala") "bar" )))
+
+  ;; Full Normalization
+  (is
+   (equalp (docstring-parser::normalize-markup-text
+	    (list "this "
+		  (docstring-parser::make-bold-element :text "is")
+		  " cool"))
+	   (list "this "
+		  (docstring-parser::make-bold-element :text "is")
+		  " cool")))
+  (is
+   (equalp (docstring-parser::normalize-markup-text
+	    (list "this "
+		  (docstring-parser::make-bold-element :text "is")
+		  " not so"
+		  " cool"))
+	   (list "this "
+		  (docstring-parser::make-bold-element :text "is")
+		  " not so cool"))))
