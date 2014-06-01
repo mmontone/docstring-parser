@@ -113,6 +113,13 @@
 	       (& (or blank tab eol eof)))
   (:text t))
 
+(defrule word* (and
+		(+ (not (or blank tab eol eof
+			    #\, #\; #\. #\:)))
+		(& (or blank tab eol eof
+		       #\, #\; #\. #\:)))
+  (:text t))
+
 (defrule list-element (+ (and list-item (? eol)))
   (:function (lambda (match)
 	       (make-list-element :items (mapcar #'first match)))))
@@ -219,3 +226,49 @@
 
 (defrule reference-type (+ (not (or tab blank eol #\))))
   (:text t))
+
+(defstruct (command-element
+	     (:print-function print-command-element))
+  name
+  options
+  args)
+
+(defun print-command-element (command stream depth)
+  (format stream "(:command ~A [~{~A~}]{~{~A~}})"
+	  (command-element-name command)
+	  (command-element-options command)
+	  (command-element-args command)))
+
+(defrule commmand (and (or #\\ #\@)
+		       command-name
+		       (? command-options)
+		       (? command-args))
+  (:function (lambda (match)
+	       (destructuring-bind (keyword name options args) match
+		 (make-command-element :name name
+				       :options options
+				       :args args)))))
+
+(defrule command-name (+ (not (or blank tab eol #\` #\{ #\[)))
+  (:text t))
+
+(defrule command-options (and #\[ command-options-list #\]))
+
+(defrule command-options-list (or (and spacing command-option spacing #\, command-options-list)
+				  (and spacing command-option spacing)))	       
+
+(defrule command-option (and command-name
+			     spacing
+			     (? (and (or #\= #\:)
+				     spacing
+				     word)))
+  (:function (lambda (match)
+	       (cons (first match)
+		     (third (third match))))))
+
+(defrule command-name (and (+ (not (or blank tab eol eof
+				       #\, #\; #\. #\: #\=)))
+			   (& (or blank tab eol eof
+				  #\, #\; #\. #\: #\=)))
+  (:text t))
+ 
