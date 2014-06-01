@@ -94,13 +94,13 @@
    (equalp
     (let ((bold-element "**this is bold**"))
       (parse 'docstring-parser::bold-element bold-element))
-    '(:bold "this is bold")))
+    (docstring-parser::make-bold-element :text "this is bold")))
   (is
    (equalp
     (let ((bold-element "**this is
 bold**"))
       (parse 'docstring-parser::bold-element bold-element))
-    '(:bold "this is
+    (docstring-parser::make-bold-element :text "this is
 bold")))
   )
 
@@ -109,17 +109,16 @@ bold")))
    (equalp
     (let ((italic-element "//this is italic//"))
       (parse 'docstring-parser::italic-element italic-element))
-    '(:italic "this is italic")))
+    (docstring-parser::make-italic-element :text "this is italic")))
   (is
    (equalp
     (let ((italic-element "//this is
 italic//"))
       (parse 'docstring-parser::italic-element italic-element))
-    '(:italic "this is
+    (docstring-parser::make-italic-element :text "this is
 italic")))
   (signals error
-    (parse 'docstring-parser::italic-element "//asdf"))
-  )
+    (parse 'docstring-parser::italic-element "//asdf")))
 
 (deftest list-test ()
 
