@@ -197,6 +197,24 @@ italic")))
 			:name "opt2"
 			:value "value2"))))))
 
+(deftest reference-test ()
+  (is (equalp
+       (parse 'docstring-parser::reference "MY-REF")
+       (docstring-parser::make-ref-element :name "MY-REF")))
+  (is (equalp
+       (parse 'docstring-parser::reference "`my-ref`")
+       (docstring-parser::make-ref-element :name "my-ref")))
+  (is (equalp
+       (parse 'docstring-parser::reference "`my-ref`(function)")
+       (docstring-parser::make-ref-element :name "my-ref"
+					   :type "function")))
+  (signals error
+    (parse 'docstring-parser::reference "`my-ref"))
+  (signals error
+    (parse 'docstring-parser::reference "my-ref"))
+  (signals error
+      (parse 'docstring-parser::reference "MY-REF(function)")))
+
 (deftest output-normalization-test ()
 
   ;; Concat

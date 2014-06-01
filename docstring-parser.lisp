@@ -58,9 +58,8 @@
   type)
 
 (defun print-ref-element (elem stream depth)
-  (format stream "(:ref~@[ (:type ~A~)] ~A)"
-	  (when (ref-element-type elem)
-	    (format stream " (~A)" (ref-element-type elem)))
+  (format stream "(:ref~@[ (:type ~A)~] ~S)"
+	  (ref-element-type elem)
 	  (string-upcase (ref-element-name elem))))
 
 (defun concat-inbetween-text (things)
