@@ -97,10 +97,10 @@
 
 (defrule tab #\Tab)
 
-(defrule spacing (* (or blank tab eof))
+(defrule spacing (* (or blank tab))
   (:text t))
 
-(defrule spacing* (* (or eol blank tab eof))
+(defrule spacing* (* (or eol blank tab))
   (:text t))
 
 (defrule letter
