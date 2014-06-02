@@ -295,3 +295,24 @@ italic")))
 	   (list "this "
 		  (docstring-parser::make-bold-element :text "is")
 		  " not so cool"))))
+
+(deftest docstring-test ()
+  (is
+   (equalp
+    (let ((docstring "A short **description**"))
+      (parse 'docstring-parser::docstring docstring))
+    (docstring-parser::make-docstring :short-description
+				      (list "A short "
+					    (docstring-parser::make-bold-element :text "description")))))
+
+  (is
+   (equalp
+    (let ((docstring "A short **description**
+
+                      With a long description"))
+      (parse 'docstring-parser::docstring docstring))
+    (docstring-parser::make-docstring
+     :short-description
+     (list "A short "
+	   (docstring-parser::make-bold-element :text "description"))
+     :long-description "With a long description"))))

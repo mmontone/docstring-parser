@@ -112,13 +112,22 @@
 (defun concat-inbetween-text* (things)
   (concat-inbetween-text (flatten things)))
 
-(defun normalize-markup-text (things)
+(defun normalize-markup-text (things &key (trim (list #\NewLine #\ )))
   (let ((things (concat-inbetween-text* things)))
     (if (and (equalp (length things) 1)
 	     (stringp (first things)))
-	(first things)
-	things)))
-
+	(string-trim trim (first things))
+	(let ((beggining (first things))
+	      (ending (car (last things))))
+	  (append (list
+		   (or (and (stringp beggining)
+			    (string-left-trim trim beggining))
+		       beggining))
+		  (butlast (cdr things))
+		  (list
+		   (or (and (stringp ending)
+			    (string-right-trim trim ending))
+		       ending)))))))
 
 (defrule eol #\NewLine)
 
@@ -500,10 +509,10 @@
 				    returns
 				    long-description
 				    metadata) match
-	       (make-docstring :short-description short-description
-			       :args (second args)
-			       :returns (second returns)
-			       :long-description (second long-description)
+		 (make-docstring :short-description short-description
+				 :args (second args)
+				 :returns (second returns)
+				 :long-description (third long-description)
 			       :metadata (second metadata))))))
 
 (defrule docstring-short-description (and (! (or docstring-element (and eol eol)))
@@ -520,5 +529,4 @@
 						  (? (and eol
 							  (? docstring-long-description))))))
   (:function (lambda (match)
-	       (normalize-markup-text (list (second match)
-					    (third match))))))
+	       (normalize-markup-text (second match)))))
