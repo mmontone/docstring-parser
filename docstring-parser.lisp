@@ -288,10 +288,10 @@
 	       (text
 		(second match)))))
 
-(defrule command-name (+ (not (or blank tab eol #\` #\{ #\[)))
+(defrule command-name word*
   (:text t))
 
-(defrule command-options (and #\[ command-options-list #\])
+(defrule command-options (and #\[ (? command-options-list) #\])
   (:function (lambda (match)
 	       (second match))))
 
@@ -312,10 +312,8 @@
 		     (third (third match))))))
 
 (defrule command-option-name
-    (and (+ (not (or blank tab eol eof
-		     #\, #\; #\. #\: #\= #\])))
-	 (& (or blank tab eol eof
-		#\, #\; #\. #\: #\=)))
+    (and (+ (not (or word-separator #\=)))
+	 (& (or word-separator #\=)))
   (:function (lambda (match)
 	       (text (first match)))))
 
@@ -372,3 +370,8 @@
 (defrule return-description (and markup-text-line)
   (:function (lambda (match)
 	       (normalize-markup-text match))))
+
+(defrule docstring (and (? docstring-short-description)
+			(? args-element)
+			(? returns-element)))
+			

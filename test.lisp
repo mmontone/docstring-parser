@@ -230,7 +230,39 @@ italic")))
 							:description "This is my arg")
 		    (docstring-parser::make-arg-element :name "another-arg"
 							:type "string"
-							:description (list "A " (docstring-parser::make-bold-element :text "string"))))))))  
+							:description (list "A " (docstring-parser::make-bold-element :text "string"))))))))
+
+(deftest commands-test ()
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command")
+       (docstring-parser::make-command-element :name "my-command")))
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command[]")
+       (docstring-parser::make-command-element :name "my-command")))
+  (is (equalp
+       (parse 'docstring-parser::command "@my-command")
+       (docstring-parser::make-command-element :name "my-command")))
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command[opt1]")
+       (docstring-parser::make-command-element :name "my-command"
+					       :options (list (list "opt1")))))
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]")
+       (docstring-parser::make-command-element :name "my-command"
+					       :options (list (list "opt1")
+							      (cons "opt2" "33")))))
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]{x}")
+       (docstring-parser::make-command-element :name "my-command"
+					       :options (list (list "opt1")
+							      (cons "opt2" "33"))
+					       :args (list "x"))))
+  (is (equalp
+       (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]{x}{y}")
+       (docstring-parser::make-command-element :name "my-command"
+					       :options (list (list "opt1")
+							      (cons "opt2" "33"))
+					       :args (list "x" "y")))))
 
 (deftest output-normalization-test ()
 
