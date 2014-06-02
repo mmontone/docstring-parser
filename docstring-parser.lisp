@@ -252,13 +252,12 @@
   (:function (lambda (match)
 	       (text (first match)))))
 
-(defrule reference (or upcase-word
-		       (and #\` reference-text #\`
-			    (? (and
-				spacing #\( spacing
-				reference-type
-				spacing #\)))))
-  (:function
+(defrule reference (and #\` reference-text #\`
+			(? (and
+			    spacing #\( spacing
+			    reference-type
+			    spacing #\))))
+(:function
    (lambda (match)
      (if (stringp match)
 	 (make-ref-element :name match)
@@ -351,6 +350,7 @@
 (defrule arg-type-name word*)
 (defrule arg-description (or (and markup-text-line
 				  eol
+				  (! (and spacing arg-element))
 				  arg-description)
 			     markup-text-line)
   (:function (lambda (match)
