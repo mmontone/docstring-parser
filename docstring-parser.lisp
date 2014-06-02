@@ -138,9 +138,9 @@
   (:function (lambda (match)
 	       (make-list-element :items (mapcar #'first match)))))
 
-(defrule list-item (and spacing #\* list-item-text)
+(defrule list-item (and spacing (! bold-element) #\* list-item-text)
   (:function (lambda (match)
-	       (make-list-item-element :text (third match)))))
+	       (make-list-item-element :text (nth 3 match)))))
 
 (defrule list-item-text (and (! (or (and eol list-item)
 				    (and eol eol)))
@@ -173,7 +173,16 @@
 (defrule markup-element (or code-element
 			    bold-element
 			    italic-element
+			    reference
 			    list-element))
+
+(defrule sub-markup-element (or code-element
+				bold-element
+				italic-element
+				reference))
+
+(defrule top-markup-element (or list-element
+				list-item))
 
 (defrule text-line (+ (and spacing word spacing))
   (:text t))
@@ -181,17 +190,18 @@
 (defrule text (+ (and spacing* word spacing*))
   (:text t))
 
-(defrule markup-text-line (or (and spacing markup-element spacing markup-text-line)
-			      (and spacing word  spacing markup-text-line)
+(defrule markup-text-line (or (and spacing markup-element spacing sub-markup-text-line)
 			      (and spacing markup-element)
+			      (and spacing word  spacing sub-markup-text-line)
 			      (and spacing word))
   (:function normalize-markup-text))
 
-(defrule markup-text
-    (or (and spacing* markup-element spacing* markup-text)
-	(and spacing* word spacing* markup-text)
-	(and spacing* markup-element)
-	(and spacing* word))
+(defrule sub-markup-text-line (or (and spacing sub-markup-element spacing sub-markup-text-line)
+				  (and spacing sub-markup-element)
+				  (and spacing word  spacing markup-text-line)
+				  (and spacing word)))
+
+(defrule markup-text (* (and markup-text-line (or eol eof)))
   (:function normalize-markup-text))
 
 (defrule docstring-option-name (+ (not (or #\: #\; blank tab eol)))
