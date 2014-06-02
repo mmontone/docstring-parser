@@ -355,3 +355,20 @@
 			     markup-text-line)
   (:function (lambda (match)
 	       (normalize-markup-text match))))
+
+(defstruct (returns-element
+	     (:print-function print-returns-element))
+  returns)
+
+(defun print-returns-element (elem stream depth)
+  (format stream "(:returns ~S)" (returns-element-returns elem)))
+
+(defrule returns-element (and "Returns:"
+			      spacing
+			      return-description)
+  (:function (lambda (match)
+	       (make-returns-element :returns (third match)))))
+
+(defrule return-description (and markup-text-line)
+  (:function (lambda (match)
+	       (normalize-markup-text match))))
