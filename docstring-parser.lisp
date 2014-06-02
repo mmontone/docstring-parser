@@ -218,7 +218,7 @@
 
 (defrule sub-markup-text-line (or (and spacing sub-markup-element spacing sub-markup-text-line)
 				  (and spacing sub-markup-element)
-				  (and spacing word  spacing markup-text-line)
+				  (and spacing word  spacing sub-markup-text-line)
 				  (and spacing word)))
 
 (defrule markup-text (* (and markup-text-line (or eol eof)))
@@ -348,7 +348,8 @@
 (defrule arg-type-name word*)
 (defrule arg-description (or (and markup-text-line
 				  eol
-				  (! (and spacing arg-element))
+				  (! (and spacing (or arg-element
+						      returns-element)))
 				  arg-description)
 			     markup-text-line)
   (:function (lambda (match)
@@ -462,8 +463,62 @@
 	       (cons (second match)
 		     (nth 5 match)))))
 
-(defrule docstring (and (? docstring-short-description)
-			(? args-element)
-			(? returns-element)
-			(? docstring-long-description)
-			(? docstring-metadata)))
+(defstruct (docstring
+	     (:print-function print-docstring))
+  short-description
+  args
+  returns
+  long-description
+  metadata)
+
+(defun print-docstring (docstring stream depth)
+  (format stream "(:docstring")
+  (when (docstring-short-description docstring)
+    (format stream " :short-description ~S" (docstring-short-description docstring)))
+  (when (docstring-args docstring)
+    (format stream " :args ~A" (docstring-args docstring)))
+  (when (docstring-returns docstring)
+    (format stream " :returns ~A" (docstring-returns docstring)))
+  (when (docstring-long-description docstring)
+    (format stream " :long-description ~S" (docstring-long-description docstring)))
+  (when (docstring-metadata docstring)
+    (format stream " :metadata ~A" (docstring-metadata docstring)))
+  (format stream ")"))
+
+(defrule docstring-element (or args-element
+			       returns-element
+			       docstring-metadata))
+
+(defrule docstring (and docstring-short-description
+			(? (and spacing* args-element))
+			(? (and spacing* returns-element))
+			(? (and eol eol docstring-long-description))
+			(? (and spacing* docstring-metadata)))
+  (:function (lambda (match)
+	       (destructuring-bind (short-description
+				    args
+				    returns
+				    long-description
+				    metadata) match
+	       (make-docstring :short-description short-description
+			       :args (second args)
+			       :returns (second returns)
+			       :long-description (second long-description)
+			       :metadata (second metadata))))))
+
+(defrule docstring-short-description (and (! (or docstring-element (and eol eol)))
+					  markup-text-line
+					  (? (and eol
+						  docstring-short-description)))
+  (:function (lambda (match)
+	       (normalize-markup-text (list (second match)
+					    (third match))))))
+
+(defrule docstring-long-description (and (! (and spacing docstring-element))
+					 (or (and eol (? docstring-long-description))
+					     (and markup-text-line
+						  (? (and eol
+							  (? docstring-long-description))))))
+  (:function (lambda (match)
+	       (normalize-markup-text (list (second match)
+					    (third match))))))
