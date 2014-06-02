@@ -349,15 +349,6 @@
   (:function (lambda (match)
 	       (second match))))
 (defrule arg-type-name word*)
-
-#+nil(defrule arg-description (and (! (or arg-element
-				     (and eol eol)))
-			      (or
-			       (and spacing* word spacing* arg-description)
-			       (and spacing* word)))
-  (:function (lambda (match)
-	       (text (second match)))))
-
 (defrule arg-description (or (and markup-text-line
 				  eol
 				  arg-description)
