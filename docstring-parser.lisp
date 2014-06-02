@@ -239,36 +239,54 @@
 	  (command-element-options command)
 	  (command-element-args command)))
 
-(defrule commmand (and (or #\\ #\@)
-		       command-name
-		       (? command-options)
-		       (? command-args))
+(defrule command (and (or #\\ #\@)
+		      command-name
+		      (? command-options)
+		      (? command-args))
   (:function (lambda (match)
 	       (destructuring-bind (keyword name options args) match
 		 (make-command-element :name name
 				       :options options
 				       :args args)))))
 
+(defrule command-args (* command-arg))
+(defrule command-arg (and #\{ (*(not #\})) #\})
+  (:function (lambda (match)
+	       (text
+		(second match)))))
+
 (defrule command-name (+ (not (or blank tab eol #\` #\{ #\[)))
   (:text t))
 
-(defrule command-options (and #\[ command-options-list #\]))
+(defrule command-options (and #\[ command-options-list #\])
+  (:function (lambda (match)
+	       (second match))))
 
-(defrule command-options-list (or (and spacing command-option spacing #\, command-options-list)
-				  (and spacing command-option spacing)))	       
+(defrule command-options-list (or (and spacing command-option spacing #\,
+				       command-options-list)
+				  (and spacing command-option spacing))
+  (:function (lambda (match)
+	       (cons (second match)
+		     (nth 4 match)))))
 
-(defrule command-option (and command-name
+(defrule command-option (and command-option-name
 			     spacing
 			     (? (and (or #\= #\:)
 				     spacing
-				     word)))
+				     command-option-value)))
   (:function (lambda (match)
 	       (cons (first match)
 		     (third (third match))))))
 
-(defrule command-name (and (+ (not (or blank tab eol eof
-				       #\, #\; #\. #\: #\=)))
-			   (& (or blank tab eol eof
-				  #\, #\; #\. #\: #\=)))
+(defrule command-option-name
+    (and (+ (not (or blank tab eol eof
+		     #\, #\; #\. #\: #\= #\])))
+	 #+nil(& (or blank tab eol eof
+		#\, #\; #\. #\: #\=))
+	 )
   (:text t))
- 
+
+(defrule command-option-value
+    (and (+ (not (or blank tab eol eof
+		     #\, #\; #\. #\: #\= #\]))))
+  (:text t))
