@@ -62,6 +62,18 @@
 	  (ref-element-type elem)
 	  (string-upcase (ref-element-name elem))))
 
+(defstruct (command-element
+	     (:print-function print-command-element))
+  name
+  options
+  args)
+
+(defun print-command-element (command stream depth)
+  (format stream "(:command ~A [~{~A~}]{~{~A~}})"
+	  (command-element-name command)
+	  (command-element-options command)
+	  (command-element-args command)))
+
 (defun concat-inbetween-text (things)
   (let ((result nil))
     (loop for thing in things
@@ -111,14 +123,16 @@
 (defrule word (and
 	       (+ (not (or blank tab eol eof)))
 	       (& (or blank tab eol eof)))
-  (:text t))
+  (:function (lambda (match)
+	       (text (first match)))))
 
 (defrule word* (and
 		(+ (not (or blank tab eol eof
 			    #\, #\; #\. #\:)))
 		(& (or blank tab eol eof
 		       #\, #\; #\. #\:)))
-  (:text t))
+  (:function (lambda (match)
+	       (text (first match)))))
 
 (defrule list-element (+ (and list-item (? eol)))
   (:function (lambda (match)
@@ -175,7 +189,7 @@
 
 (defrule markup-text
     (or (and spacing* markup-element spacing* markup-text)
-	(and spacing* word  spacing* markup-text)
+	(and spacing* word spacing* markup-text)
 	(and spacing* markup-element)
 	(and spacing* word))
   (:function normalize-markup-text))
@@ -203,8 +217,10 @@
 (defrule upcase-character (not (or blank tab eol
 				   (character-ranges (#\a #\z)))))
 
-(defrule upcase-word (and (+ upcase-character) (& (or tab blank eol eof)))
-  (:text t))
+(defrule upcase-word (and (+ upcase-character)
+			  (& (or tab blank eol eof)))
+  (:function (lambda (match)
+	       (text (first match)))))
 
 (defrule reference (or upcase-word
 		       (and #\` reference-text #\`
@@ -226,18 +242,6 @@
 
 (defrule reference-type (+ (not (or tab blank eol #\))))
   (:text t))
-
-(defstruct (command-element
-	     (:print-function print-command-element))
-  name
-  options
-  args)
-
-(defun print-command-element (command stream depth)
-  (format stream "(:command ~A [~{~A~}]{~{~A~}})"
-	  (command-element-name command)
-	  (command-element-options command)
-	  (command-element-args command)))
 
 (defrule command (and (or #\\ #\@)
 		      command-name
@@ -281,10 +285,10 @@
 (defrule command-option-name
     (and (+ (not (or blank tab eol eof
 		     #\, #\; #\. #\: #\= #\])))
-	 #+nil(& (or blank tab eol eof
-		#\, #\; #\. #\: #\=))
-	 )
-  (:text t))
+	 (& (or blank tab eol eof
+		#\, #\; #\. #\: #\=)))
+  (:function (lambda (match)
+	       (text (first match)))))
 
 (defrule command-option-value
     (and (+ (not (or blank tab eol eof
