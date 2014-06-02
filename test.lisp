@@ -315,4 +315,84 @@ italic")))
      :short-description
      (list "A short "
 	   (docstring-parser::make-bold-element :text "description"))
-     :long-description "With a long description"))))
+     :long-description "With a long description")))
+
+  
+  (let ((docstring "A short **description**
+
+                    With a long description
+
+                    TODO: do this"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+
+                      Args:
+                         - hello:Hello"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+                          Args:
+                            - hello:Hello"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+
+                      With a long description
+
+                      TODO: do this"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+
+                      Args:
+                        - my-arg: Thello
+
+                      With a long description
+                      ``lala``
+
+                      TODO: do this"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+
+                      Args:
+                        - my-arg: Thello
+
+                      TODO: do this
+                      Author: Mariano Montone"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+                      With more description
+
+                      Args:
+                        - my-arg: Thello
+
+                      Look at this example:
+
+                      TODO: do this
+                      Author: Mariano Montone"))
+    (parse 'docstring-parser::docstring docstring))
+
+  (let ((docstring "A short **description**
+                      With more description
+
+                      Args:
+                        - my-arg: Thello
+                        - second (integer): Do this
+
+                      Look at **this** example:
+                      ``(+ 2 3)``. Also see: `my-func`(function)
+
+                      This is useful for:
+
+                      * Testing
+                      * Prototyping
+
+                      TODO: do this
+                      Author: Mariano Montone"))
+    (parse 'docstring-parser::docstring docstring))
+
+  )
+  

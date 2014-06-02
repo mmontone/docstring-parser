@@ -501,21 +501,24 @@
 (defrule docstring (and docstring-short-description
 			(? (and spacing* args-element))
 			(? (and spacing* returns-element))
-			(? (and eol eol docstring-long-description))
-			(? (and spacing* docstring-metadata)))
+			(? (and spacing* docstring-long-description))
+			(? (and spacing* docstring-metadata))
+			spacing*)
   (:function (lambda (match)
 	       (destructuring-bind (short-description
 				    args
 				    returns
 				    long-description
-				    metadata) match
+				    metadata
+				    spacing) match
 		 (make-docstring :short-description short-description
 				 :args (second args)
 				 :returns (second returns)
-				 :long-description (third long-description)
-			       :metadata (second metadata))))))
+				 :long-description (second long-description)
+				 :metadata (second metadata))))))
 
-(defrule docstring-short-description (and (! (or docstring-element (and eol eol)))
+(defrule docstring-short-description (and (! (or (and spacing docstring-element)
+						 (and eol eol)))
 					  markup-text-line
 					  (? (and eol
 						  docstring-short-description)))
@@ -524,9 +527,9 @@
 					    (third match))))))
 
 (defrule docstring-long-description (and (! (and spacing docstring-element))
-					 (or (and eol (? docstring-long-description))
+					 (or (and spacing eol spacing (? docstring-long-description))
 					     (and markup-text-line
-						  (? (and eol
+						  (? (and spacing eol spacing
 							  (? docstring-long-description))))))
   (:function (lambda (match)
 	       (normalize-markup-text (second match)))))
