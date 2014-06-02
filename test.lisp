@@ -394,5 +394,26 @@ italic")))
                       Author: Mariano Montone"))
     (parse 'docstring-parser::docstring docstring))
 
+    (let ((docstring "
+                      A short **description**
+                      With more description
+
+                      Args:
+                        - my-arg: Thello
+                        - second (integer): Do this
+
+                      Look at **this** example:
+                      ``(+ 2 3)``. Also see: `my-func`(function)
+
+                      This is useful for:
+
+                      * Testing \\see[section]{testing}
+                      * Prototyping
+
+                      TODO: do this
+                      Author: Mariano Montone"))
+    (parse 'docstring-parser::docstring docstring))
+
+
   )
   

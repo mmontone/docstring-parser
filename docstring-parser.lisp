@@ -498,14 +498,14 @@
 			       returns-element
 			       docstring-metadata))
 
-(defrule docstring (and docstring-short-description
+(defrule docstring (and spacing* docstring-short-description
 			(? (and spacing* args-element))
 			(? (and spacing* returns-element))
 			(? (and spacing* docstring-long-description))
 			(? (and spacing* docstring-metadata))
 			spacing*)
   (:function (lambda (match)
-	       (destructuring-bind (short-description
+	       (destructuring-bind (sp1 short-description
 				    args
 				    returns
 				    long-description
