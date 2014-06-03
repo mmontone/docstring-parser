@@ -7,6 +7,7 @@
   :license "MIT"
   :depends-on (#:esrap
                #:alexandria
-	       #:cl-ppcre)
+	       #:cl-ppcre
+	       #:cl-annot)
   :components ((:file "package")
                (:file "docstring-parser")))

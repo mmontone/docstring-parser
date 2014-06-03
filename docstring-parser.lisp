@@ -1,5 +1,19 @@
 (in-package #:docstring-parser)
 
+(annot:enable-annot-syntax)
+
+;; cl-annot patch needed:
+
+;; (defun slot-specifiers (class-definition-form)
+;;   "Return class-specifiers of CLASS-DEFINITION-FORM."
+;;   (case (first class-definition-form)
+;;     (defclass (nth 3 (progn-form-last class-definition-form)))
+;;     (defstruct (if (stringp (nth 2 (progn-form-last class-definition-form)))
+;; 		   ;; There's a documentation string, fetch the slots after it
+;; 		   (nthcdr 3 (progn-form-last class-definition-form))
+;; 		   ;; There's no documentation string, fetch the slots
+;; 		   (nthcdr 2 (progn-form-last class-definition-form))))))
+
 ;; Util
 
 (defun valid-email-address-p (string)
@@ -23,15 +37,10 @@
   
   (not (null (ppcre:scan "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)" string))))
 
+@export-structure
 (defstruct (list-element
              (:print-function print-list-element))
-  "A markup list element.
-   Parsed from
-   ``* item1
-     * item2``
-
-   Categories: Docstring elements"
-
+  "Structure documentation"
   items)
 
 (defun print-list-element (elem stream depth)
@@ -40,6 +49,7 @@
    Categories: printing"
   (format stream "(:list ~{~A~})" (list-element-items elem)))
 
+@export-structure
 (defstruct (list-item-element
              (:print-function print-list-item-element))
   text)
@@ -47,6 +57,7 @@
 (defun print-list-item-element (elem stream depth)
   (format stream "(:li ~S)" (list-item-element-text elem)))
 
+@export-structure
 (defstruct (italic-element
              (:print-function print-italic-element))
   text)
@@ -54,6 +65,7 @@
 (defun print-italic-element (elem stream depth)
   (format stream "(:italic ~S)" (italic-element-text elem)))
 
+@export-structure
 (defstruct (bold-element
              (:print-function print-bold-element))
   text)
@@ -61,6 +73,7 @@
 (defun print-bold-element (elem stream depth)
   (format stream "(:bold ~S)" (bold-element-text elem)))
 
+@export-structure
 (defstruct (code-element
              (:print-function print-code-element))
   text)
@@ -68,6 +81,7 @@
 (defun print-code-element (elem stream depth)
   (format stream "(:code ~S)" (code-element-text elem)))
 
+@export-structure
 (defstruct (link-element
 	     (:print-function print-link-element))
   url
@@ -78,6 +92,7 @@
 	  (link-element-url link)
 	  (link-element-title link)))
 
+@export-structure
 (defstruct (email-element
 	     (:print-function print-email-element))
     email)
@@ -85,6 +100,7 @@
 (defun print-email-element (elem stream depth)
   (format stream "(:email ~S)" (email-element-email elem)))
 
+@export-structure
 (defstruct (docstring-option-element
              (:print-function print-docstring-option-element))
   name
@@ -95,6 +111,7 @@
           (docstring-option-element-name elem)
           (docstring-option-element-value elem)))
 
+@export-structure
 (defstruct (docstring-options-element
              (:print-function print-docstring-options-element))
   options)
@@ -102,6 +119,7 @@
 (defun print-docstring-options-element (elem stream depth)
   (format stream "(:options ~{~A~})" (docstring-options-element-options elem)))
 
+@export-structure
 (defstruct (ref-element
              (:print-function print-ref-element))
   name
@@ -113,6 +131,8 @@
           (string-upcase (ref-element-name elem))))
 
 ;; Commands
+
+@export-structure
 (defstruct (command-element
              (:print-function print-command-element))
   name
@@ -134,6 +154,7 @@
   (and (command-element-p command)
        (equalp (command-element-name command) "arg")))
 
+@export-structure
 (defstruct (args-element
              (:print-function print-args-element))
   args)
@@ -141,6 +162,7 @@
 (defun print-args-element (args stream depth)
   (format stream "(:args ~{~A~})" (args-element-args args)))
 
+@export-structure
 (defstruct (arg-element
              (:print-function print-arg-element))
   name
@@ -466,6 +488,7 @@
   (:function (lambda (match)
                (normalize-markup-text match))))
 
+@export-structure
 (defstruct (returns-element
              (:print-function print-returns-element))
   returns)
@@ -494,6 +517,7 @@
   (:function (lambda (match)
                (normalize-markup-text match))))
 
+@export-structure
 (defstruct (docstring-metadata
              (:print-function print-docstring-metadata))
   metadata)
@@ -516,6 +540,7 @@
 
 ;; author
 
+@export-structure
 (defstruct (docstring-author
              (:print-function print-docstring-author))
   author)
@@ -529,6 +554,7 @@
 
 ;; version
 
+@export-structure
 (defstruct (docstring-version
              (:print-function print-docstring-version))
   version)
@@ -542,6 +568,7 @@
 
 ;; date
 
+@export-structure
 (defstruct (docstring-date
              (:print-function print-docstring-date))
   date)
@@ -555,6 +582,7 @@
 
 ;; TODO
 
+@export-structure
 (defstruct (docstring-todo
              (:print-function print-docstring-todo))
   todo)
@@ -568,6 +596,7 @@
 
 ;; See
 
+@export-structure
 (defstruct (docstring-see
              (:print-function print-docstring-see))
   references)
@@ -589,6 +618,7 @@
 
 ;; Tags
 
+@export-structure
 (defstruct (docstring-tags
 	     (:print-function print-docstring-tags))
   tags)
@@ -613,6 +643,7 @@
 
 ;; Categories
 
+@export-structure
 (defstruct (docstring-categories
 	     (:print-function print-docstring-categories))
   categories)
@@ -641,6 +672,7 @@
 
 ;; Function docstring
 
+@export-structure
 (defstruct (function-docstring
              (:print-function print-function-docstring))
   options
@@ -668,6 +700,7 @@
 
 ;; Class docstring
 
+@export-structure
 (defstruct (class-docstring
              (:print-function print-class-docstring))
   options
@@ -701,6 +734,7 @@
 
 ;; Package docstring
 
+@export-structure
 (defstruct (package-docstring
              (:print-function print-package-docstring))
   options
