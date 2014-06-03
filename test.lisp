@@ -152,26 +152,26 @@ italic")))
 (deftest markup-text-test ()
   (is (tree-equal
        (let ((text "this is a **test**"))
-	 (parse 'docstring-parser::markup-text text))
+         (parse 'docstring-parser::markup-text text))
        (list "this is a " (docstring-parser::make-bold-element :text "test"))
        :test #'equalp))
 
   (is (tree-equal
        (let ((text "this is a //super// **test**"))
-	 (parse 'docstring-parser::markup-text text))
+         (parse 'docstring-parser::markup-text text))
        (list "this is a "
-	     (docstring-parser::make-italic-element :text "super")
-	     " "
-	     (docstring-parser::make-bold-element :text "test"))
+             (docstring-parser::make-italic-element :text "super")
+             " "
+             (docstring-parser::make-bold-element :text "test"))
        :test #'equalp))
 
   (is (tree-equal
        (let ((text "this ``is a //super// **test**`` of **code**"))
-	 (parse 'docstring-parser::markup-text text))
+         (parse 'docstring-parser::markup-text text))
        (list "this "
-	     (docstring-parser::make-code-element :text "is a //super// **test**")
-	     " of "
-	     (docstring-parser::make-bold-element :text "code"))
+             (docstring-parser::make-code-element :text "is a //super// **test**")
+             " of "
+             (docstring-parser::make-bold-element :text "code"))
        :test #'equalp)))
 
 (deftest docstring-options-test ()
@@ -180,7 +180,7 @@ italic")))
     (let ((text "my-option:true"))
       (parse 'docstring-parser::docstring-option text))
     (docstring-parser::make-docstring-option-element :name "my-option"
-						     :value "true")))
+                                                     :value "true")))
 
   (is (equalp
        (parse 'docstring-parser::docstring-option "lisp")
@@ -189,48 +189,48 @@ italic")))
   (is (equalp
        (parse 'docstring-parser::docstring-options "!opt1: value1; opt2: value2;")
        (docstring-parser::make-docstring-options-element
-	:options (list (docstring-parser::make-docstring-option-element
-			:name "opt1"
-			:value "value1")
-		       (docstring-parser::make-docstring-option-element
-			:name "opt2"
-			:value "value2"))))))
+        :options (list (docstring-parser::make-docstring-option-element
+                        :name "opt1"
+                        :value "value1")
+                       (docstring-parser::make-docstring-option-element
+                        :name "opt2"
+                        :value "value2"))))))
 
 (deftest reference-test ()
   #+nil(is (equalp
-       (parse 'docstring-parser::reference "MY-REF")
-       (docstring-parser::make-ref-element :name "MY-REF")))
+            (parse 'docstring-parser::reference "MY-REF")
+            (docstring-parser::make-ref-element :name "MY-REF")))
   (is (equalp
        (parse 'docstring-parser::reference "`my-ref`")
        (docstring-parser::make-ref-element :name "my-ref")))
   (is (equalp
        (parse 'docstring-parser::reference "`my-ref`(function)")
        (docstring-parser::make-ref-element :name "my-ref"
-					   :type "function")))
+                                           :type "function")))
   (signals error
     (parse 'docstring-parser::reference "`my-ref"))
   (signals error
     (parse 'docstring-parser::reference "my-ref"))
   (signals error
-      (parse 'docstring-parser::reference "MY-REF(function)")))
+    (parse 'docstring-parser::reference "MY-REF(function)")))
 
 (deftest args-test ()
   (is (equalp
        (parse 'docstring-parser::args-element "Args: -my-arg:This is my arg")
        (docstring-parser::make-args-element
-	:args (list (docstring-parser::make-arg-element :name "my-arg"
-							:type nil
-							:description "This is my arg")))))
+        :args (list (docstring-parser::make-arg-element :name "my-arg"
+                                                        :type nil
+                                                        :description "This is my arg")))))
   (is (equalp
        (parse 'docstring-parser::args-element "Args: - my-arg:This is my arg
                                                      - another-arg(string): A **string**")
        (docstring-parser::make-args-element
-	:args (list (docstring-parser::make-arg-element :name "my-arg"
-							:type nil
-							:description "This is my arg")
-		    (docstring-parser::make-arg-element :name "another-arg"
-							:type "string"
-							:description (list "A " (docstring-parser::make-bold-element :text "string"))))))))
+        :args (list (docstring-parser::make-arg-element :name "my-arg"
+                                                        :type nil
+                                                        :description "This is my arg")
+                    (docstring-parser::make-arg-element :name "another-arg"
+                                                        :type "string"
+                                                        :description (list "A " (docstring-parser::make-bold-element :text "string"))))))))
 
 (deftest commands-test ()
   (is (equalp
@@ -245,56 +245,56 @@ italic")))
   (is (equalp
        (parse 'docstring-parser::command "\\my-command[opt1]")
        (docstring-parser::make-command-element :name "my-command"
-					       :options (list (list "opt1")))))
+                                               :options (list (list "opt1")))))
   (is (equalp
        (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]")
        (docstring-parser::make-command-element :name "my-command"
-					       :options (list (list "opt1")
-							      (cons "opt2" "33")))))
+                                               :options (list (list "opt1")
+                                                              (cons "opt2" "33")))))
   (is (equalp
        (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]{x}")
        (docstring-parser::make-command-element :name "my-command"
-					       :options (list (list "opt1")
-							      (cons "opt2" "33"))
-					       :args (list "x"))))
+                                               :options (list (list "opt1")
+                                                              (cons "opt2" "33"))
+                                               :args (list "x"))))
   (is (equalp
        (parse 'docstring-parser::command "\\my-command[opt1, opt2=33]{x}{y}")
        (docstring-parser::make-command-element :name "my-command"
-					       :options (list (list "opt1")
-							      (cons "opt2" "33"))
-					       :args (list "x" "y")))))
+                                               :options (list (list "opt1")
+                                                              (cons "opt2" "33"))
+                                               :args (list "x" "y")))))
 
 (deftest output-normalization-test ()
 
   ;; Concat
   (is
    (equalp (docstring-parser::concat-inbetween-text '("foo" "bar"))
-	   (list "foobar")))
+           (list "foobar")))
 
   (is (equalp (docstring-parser::concat-inbetween-text '("foo" "bar" (:li "lala")))
-	      (list "foobar" '(:li "lala"))))
+              (list "foobar" '(:li "lala"))))
 
   (is (equalp (docstring-parser::concat-inbetween-text '("foo" (:li "lala") "bar" ))
-	      '("foo" (:li "lala") "bar" )))
+              '("foo" (:li "lala") "bar" )))
 
   ;; Full Normalization
   (is
    (equalp (docstring-parser::normalize-markup-text
-	    (list "this "
-		  (docstring-parser::make-bold-element :text "is")
-		  " cool"))
-	   (list "this "
-		  (docstring-parser::make-bold-element :text "is")
-		  " cool")))
+            (list "this "
+                  (docstring-parser::make-bold-element :text "is")
+                  " cool"))
+           (list "this "
+                 (docstring-parser::make-bold-element :text "is")
+                 " cool")))
   (is
    (equalp (docstring-parser::normalize-markup-text
-	    (list "this "
-		  (docstring-parser::make-bold-element :text "is")
-		  " not so"
-		  " cool"))
-	   (list "this "
-		  (docstring-parser::make-bold-element :text "is")
-		  " not so cool"))))
+            (list "this "
+                  (docstring-parser::make-bold-element :text "is")
+                  " not so"
+                  " cool"))
+           (list "this "
+                 (docstring-parser::make-bold-element :text "is")
+                 " not so cool"))))
 
 (deftest function-docstring-test ()
   (is
@@ -302,8 +302,8 @@ italic")))
     (let ((docstring "A short **description**"))
       (parse 'docstring-parser::function-docstring docstring))
     (docstring-parser::make-function-docstring :short-description
-				      (list "A short "
-					    (docstring-parser::make-bold-element :text "description")))))
+                                               (list "A short "
+                                                     (docstring-parser::make-bold-element :text "description")))))
 
   (is
    (equalp
@@ -314,10 +314,10 @@ italic")))
     (docstring-parser::make-function-docstring
      :short-description
      (list "A short "
-	   (docstring-parser::make-bold-element :text "description"))
+           (docstring-parser::make-bold-element :text "description"))
      :long-description "With a long description")))
 
-  
+
   (let ((docstring "A short **description**
 
                     With a long description
@@ -398,7 +398,7 @@ italic")))
                       Author: Mariano Montone"))
     (parse 'docstring-parser::function-docstring docstring))
 
-    (let ((docstring "
+  (let ((docstring "
                       A short **description**
                       With more description
 
