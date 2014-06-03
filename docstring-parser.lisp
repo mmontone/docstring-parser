@@ -816,13 +816,37 @@
 ;; Api
 
 (defun parse-function-docstring (docstring)
+  "Parses a function docstring
+
+   Returns: a `docstring`(structure) or error
+   Tags: parsing
+   Categories: Parsing toplevel"
+  
   (parse 'function-docstring docstring))
 
 (defun parse-class-docstring (docstring)
+  "Parses a class or structure docstring
+
+   Returns: a `docstring`(structure) or error
+   Tags: parsing
+   Categories: Parsing toplevel"
+  
   (parse 'class-docstring docstring))
 
 (defun parse-class-slot-docstring (docstring)
+  "Parses a class slot documentation string
+
+   Returns: a `docstring`(structure) or error
+   Tags: parsing
+   Categories: Parsing toplevel"
+  
   (parse 'markup-text docstring))
 
 (defun parse-package-docstring (docstring)
+  "Parses a package docstring
+
+   Returns: a `docstring`(structure) or error
+   Tags: parsing
+   Categories: Parsing toplevel"
+  
   (parse 'package-docstring docstring))
