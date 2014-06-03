@@ -472,16 +472,16 @@
 	       (cons (second match)
 		     (nth 5 match)))))
 
-(defstruct (docstring
-	     (:print-function print-docstring))
+(defstruct (function-docstring
+	     (:print-function print-function-docstring))
   short-description
   args
   returns
   long-description
   metadata)
 
-(defun print-docstring (docstring stream depth)
-  (format stream "(:docstring")
+(defun print-function-docstring (docstring stream depth)
+  (format stream "(:function-docstring")
   (when (docstring-short-description docstring)
     (format stream " :short-description ~S" (docstring-short-description docstring)))
   (when (docstring-args docstring)
@@ -498,19 +498,20 @@
 			       returns-element
 			       docstring-metadata))
 
-(defrule docstring (and spacing* docstring-short-description
-			(? (and spacing* args-element))
-			(? (and spacing* returns-element))
-			(? (and spacing* docstring-long-description))
-			(? (and spacing* docstring-metadata))
-			spacing*)
+(defrule function-docstring
+    (and spacing* docstring-short-description
+	 (? (and spacing* args-element))
+	 (? (and spacing* returns-element))
+	 (? (and spacing* docstring-long-description))
+	 (? (and spacing* docstring-metadata))
+	 spacing*)
   (:function (lambda (match)
 	       (destructuring-bind (sp1 short-description
-				    args
-				    returns
-				    long-description
-				    metadata
-				    spacing) match
+					args
+					returns
+					long-description
+					metadata
+					spacing) match
 		 (make-docstring :short-description short-description
 				 :args (second args)
 				 :returns (second returns)

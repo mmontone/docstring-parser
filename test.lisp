@@ -296,12 +296,12 @@ italic")))
 		  (docstring-parser::make-bold-element :text "is")
 		  " not so cool"))))
 
-(deftest docstring-test ()
+(deftest function-docstring-test ()
   (is
    (equalp
     (let ((docstring "A short **description**"))
-      (parse 'docstring-parser::docstring docstring))
-    (docstring-parser::make-docstring :short-description
+      (parse 'docstring-parser::function-docstring docstring))
+    (docstring-parser::make-function-docstring :short-description
 				      (list "A short "
 					    (docstring-parser::make-bold-element :text "description")))))
 
@@ -310,8 +310,8 @@ italic")))
     (let ((docstring "A short **description**
 
                       With a long description"))
-      (parse 'docstring-parser::docstring docstring))
-    (docstring-parser::make-docstring
+      (parse 'docstring-parser::function-docstring docstring))
+    (docstring-parser::make-function-docstring
      :short-description
      (list "A short "
 	   (docstring-parser::make-bold-element :text "description"))
@@ -323,25 +323,25 @@ italic")))
                     With a long description
 
                     TODO: do this"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
 
                       Args:
                          - hello:Hello"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
                           Args:
                             - hello:Hello"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
 
                       With a long description
 
                       TODO: do this"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
 
@@ -352,7 +352,7 @@ italic")))
                       ``lala``
 
                       TODO: do this"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
 
@@ -361,7 +361,7 @@ italic")))
 
                       TODO: do this
                       Author: Mariano Montone"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
                       With more description
@@ -373,7 +373,7 @@ italic")))
 
                       TODO: do this
                       Author: Mariano Montone"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
   (let ((docstring "A short **description**
                       With more description
@@ -392,7 +392,7 @@ italic")))
 
                       TODO: do this
                       Author: Mariano Montone"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
     (let ((docstring "
                       A short **description**
@@ -412,8 +412,7 @@ italic")))
 
                       TODO: do this
                       Author: Mariano Montone"))
-    (parse 'docstring-parser::docstring docstring))
+    (parse 'docstring-parser::function-docstring docstring))
 
 
   )
-  
