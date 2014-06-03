@@ -358,6 +358,10 @@ italic")))
 
                       Args:
                         - my-arg: Thello
+                        - my-other-arg: Super arg
+                                        that binds `my-arg`
+
+                      Example: ``asdfaf``
 
                       TODO: do this
                       Author: Mariano Montone"))

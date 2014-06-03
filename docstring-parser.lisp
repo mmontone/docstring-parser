@@ -528,9 +528,10 @@
 					    (third match))))))
 
 (defrule docstring-long-description (and (! (and spacing docstring-element))
-					 (or (and spacing eol spacing (? docstring-long-description))
-					     (and markup-text-line
-						  (? (and spacing eol spacing
-							  (? docstring-long-description))))))
+					 markup-text-line
+					  (? (and eol
+						  docstring-long-description)))
+					 
   (:function (lambda (match)
 	       (normalize-markup-text (second match)))))
+
