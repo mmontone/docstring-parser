@@ -62,6 +62,7 @@
           (ref-element-type elem)
           (string-upcase (ref-element-name elem))))
 
+;; Commands
 (defstruct (command-element
              (:print-function print-command-element))
   name
@@ -69,10 +70,19 @@
   args)
 
 (defun print-command-element (command stream depth)
-  (format stream "(:command ~A [~{~A~}]{~{~A~}})"
+  (format stream "(:command ~A [~{~A~}]~{{~A}~})"
           (command-element-name command)
           (command-element-options command)
           (command-element-args command)))
+
+;; Specific commands
+(defun arg-command-p (command)
+  "Checks whether `command` is an **arg** command
+
+   TODO: Check that command options and arguments are valid."
+  
+  (and (command-element-p command)
+       (equalp (command-element-name command) "arg")))
 
 (defstruct (args-element
              (:print-function print-args-element))
@@ -298,10 +308,21 @@
                                        :args args)))))
 
 (defrule command-args (* command-arg))
-(defrule command-arg (and #\{ (*(not #\})) #\})
+(defrule command-arg (and #\{
+			  spacing
+			  (* (and (! #\})
+				  (or markup-element
+				      command-word)
+				  spacing))
+			  #\})
   (:function (lambda (match)
-               (text
-                (second match)))))
+               (normalize-markup-text
+                (third match)))))
+(defrule command-word (and
+		       (+ (not (or blank tab eol eof #\})))
+		       (& (or blank tab eol eof #\})))
+  (:function (lambda (match)
+               (text (first match)))))
 
 (defrule command-name word*
   (:text t))
