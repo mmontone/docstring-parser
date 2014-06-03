@@ -424,8 +424,9 @@ italic")))
                       Author: Mariano Montone"))
     (parse 'docstring-parser::function-docstring docstring))
 
-  ;; Tags test
+  ;; Tags and categories test
   (let ((docstring "A short description
 
-                    Tags: foo, bar"))
+                    Tags: foo, bar
+                    Categories: testing, lala"))
     (docstring-parser::parse-function-docstring docstring)))
