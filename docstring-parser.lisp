@@ -1,10 +1,43 @@
 (in-package #:docstring-parser)
 
+;; Util
+
+(defun valid-email-address-p (string)
+  "Validates an email address
+
+   Args: - string(string): The string to validate
+   Returns: T if the email is valid
+   Tags: validation
+   Categories: utilities, validation"
+  
+  (not (null
+	(ppcre:scan "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$" string))))
+
+(defun valid-url-p (string)
+  "Validates an url
+
+   Args: - string(string): The string to validate
+   Returns: T if the string is a valid url
+   Tags: validation
+   Categories: utilities, validation"
+  
+  (not (null (ppcre:scan "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\??(?:[\\-\\+=&;%@\\.\\w_]*)#?(?:[\\.\\!\\/\\\\\\w]*))?)" string))))
+
 (defstruct (list-element
              (:print-function print-list-element))
+  "A markup list element.
+   Parsed from
+   ``* item1
+     * item2``
+
+   Categories: Docstring elements"
+
   items)
 
 (defun print-list-element (elem stream depth)
+  "Print a list element
+
+   Categories: printing"
   (format stream "(:list ~{~A~})" (list-element-items elem)))
 
 (defstruct (list-item-element
@@ -34,6 +67,23 @@
 
 (defun print-code-element (elem stream depth)
   (format stream "(:code ~S)" (code-element-text elem)))
+
+(defstruct (link-element
+	     (:print-function print-link-element))
+  url
+  title)
+
+(defun print-link-element (link stream depth)
+  (format stream "(:link ~S ~@[~S~])"
+	  (link-element-url link)
+	  (link-element-title link)))
+
+(defstruct (email-element
+	     (:print-function print-email-element))
+    email)
+
+(defun print-email-element (elem stream depth)
+  (format stream "(:email ~S)" (email-element-email elem)))
 
 (defstruct (docstring-option-element
              (:print-function print-docstring-option-element))
@@ -211,6 +261,14 @@
 (defrule italic-element-text (* (not (and #\/ #\/)))
   (:text t))
 
+(defrule link-element (valid-url-p word)
+  (:function (lambda (match)
+	       (make-link-element :url match))))
+
+(defrule email-element (valid-email-address-p word)
+  (:function (lambda (match)
+	       (make-email-element :email match))))
+
 (defrule markup-element (or top-markup-element
                             sub-markup-element))
 
@@ -218,7 +276,9 @@
                                 bold-element
                                 italic-element
                                 reference
-                                command))
+				email-element
+				link-element
+				command))
 
 (defrule top-markup-element (or list-element
                                 list-item))
@@ -573,7 +633,9 @@
 	       (cons (second match)
 		     (nth 5 match)))))
 
-(defrule docstring-category word*)
+(defrule docstring-category (+ (and word*
+				    spacing))
+  (:text t))
 
 ;; Docstrings
 

@@ -6,7 +6,7 @@
   :author "Mariano Montone"
   :license "MIT"
   :depends-on (#:esrap
-               #:alexandria)
+               #:alexandria
+	       #:cl-ppcre)
   :components ((:file "package")
                (:file "docstring-parser")))
-

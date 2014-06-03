@@ -269,6 +269,14 @@ italic")))
                                                               (cons "opt2" "33"))
                                                :args (list "x" "y")))))
 
+(deftest link-element-test ()
+  (is (equalp (parse 'docstring-parser::link-element "http://www.google.com")
+	      (docstring-parser::make-link-element :url "http://www.google.com"))))
+
+(deftest email-element-test ()
+  (is (equalp (parse 'docstring-parser::email-element "marianomontone@gmail.com")
+	      (docstring-parser::make-email-element :email "marianomontone@gmail.com"))))
+
 (deftest output-normalization-test ()
 
   ;; Concat
@@ -420,6 +428,8 @@ italic")))
                       * Testing \\see[section]{testing}
                       * Prototyping
 
+                      Categories: main
+                      Tags: foo
                       TODO: do this
                       Author: Mariano Montone"))
     (parse 'docstring-parser::function-docstring docstring))
