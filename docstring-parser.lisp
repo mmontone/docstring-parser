@@ -472,6 +472,11 @@
 	       (cons (second match)
 		     (nth 5 match)))))
 
+
+;; Docstrings
+
+;; Function docstring
+
 (defstruct (function-docstring
 	     (:print-function print-function-docstring))
   short-description
@@ -482,17 +487,72 @@
 
 (defun print-function-docstring (docstring stream depth)
   (format stream "(:function-docstring")
-  (when (docstring-short-description docstring)
-    (format stream " :short-description ~S" (docstring-short-description docstring)))
-  (when (docstring-args docstring)
-    (format stream " :args ~A" (docstring-args docstring)))
-  (when (docstring-returns docstring)
-    (format stream " :returns ~A" (docstring-returns docstring)))
-  (when (docstring-long-description docstring)
-    (format stream " :long-description ~S" (docstring-long-description docstring)))
-  (when (docstring-metadata docstring)
-    (format stream " :metadata ~A" (docstring-metadata docstring)))
+  (when (function-docstring-short-description docstring)
+    (format stream " :short-description ~S" (function-docstring-short-description docstring)))
+  (when (function-docstring-args docstring)
+    (format stream " :args ~A" (function-docstring-args docstring)))
+  (when (function-docstring-returns docstring)
+    (format stream " :returns ~A" (function-docstring-returns docstring)))
+  (when (function-docstring-long-description docstring)
+    (format stream " :long-description ~S" (function-docstring-long-description docstring)))
+  (when (function-docstring-metadata docstring)
+    (format stream " :metadata ~A" (function-docstring-metadata docstring)))
   (format stream ")"))
+
+;; Class docstring
+
+(defstruct (class-docstring
+	     (:print-function print-class-docstring))
+  description
+  metadata)
+
+(defun print-class-docstring (docstring stream depth)
+  (format stream "(:class-docstring")
+  (when (class-docstring-description docstring)
+    (format stream " :description ~S" (class-docstring-description docstring)))
+  (when (class-docstring-metadata docstring)
+    (format stream " :metadata ~A" (class-docstring-metadata docstring)))
+  (format stream ")"))
+
+(defrule class-docstring
+    (and (? (and spacing* docstring-long-description))
+	 (? (and spacing* docstring-metadata))
+	 spacing*)
+  (:function (lambda (match)
+	       (destructuring-bind (description
+				    metadata
+				    spacing) match
+		 (make-class-docstring :description (second description)
+				       :metadata (second metadata))))))
+
+;; Package docstring
+
+(defstruct (package-docstring
+	     (:print-function print-package-docstring))
+  description
+  metadata)
+
+(defun print-package-docstring (docstring stream depth)
+  (format stream "(:package-docstring")
+  (when (package-docstring-description docstring)
+    (format stream " :description ~S" (package-docstring-description docstring)))
+  (when (package-docstring-metadata docstring)
+    (format stream " :metadata ~A" (package-docstring-metadata docstring)))
+  (format stream ")"))
+
+(defrule package-docstring
+    (and (? (and spacing* docstring-long-description))
+	 (? (and spacing* docstring-metadata))
+	 spacing*)
+  (:function (lambda (match)
+	       (destructuring-bind (description
+				    metadata
+				    spacing) match
+		 (make-package-docstring :description (second description)
+				       :metadata (second metadata))))))
+
+
+;; Docstring parsing
 
 (defrule docstring-element (or args-element
 			       returns-element
@@ -512,11 +572,11 @@
 					long-description
 					metadata
 					spacing) match
-		 (make-docstring :short-description short-description
-				 :args (second args)
-				 :returns (second returns)
-				 :long-description (second long-description)
-				 :metadata (second metadata))))))
+		 (make-function-docstring :short-description short-description
+					  :args (second args)
+					  :returns (second returns)
+					  :long-description (second long-description)
+					  :metadata (second metadata))))))
 
 (defrule docstring-short-description (and (! (or (and spacing docstring-element)
 						 (and eol eol)))
@@ -536,3 +596,16 @@
 	       (normalize-markup-text (list (second match)
 					    (third match))))))
 
+;; Api
+
+(defun parse-function-docstring (docstring)
+  (parse 'function-docstring docstring))
+
+(defun parse-class-docstring (docstring)
+  (parse 'class-docstring docstring))
+
+(defun parse-class-slot-docstring (docstring)
+  (parse 'markup-text docstring))
+
+(defun parse-package-docstring (docstring)
+  (parse 'package-docstring docstring))

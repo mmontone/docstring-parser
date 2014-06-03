@@ -404,6 +404,7 @@ italic")))
 
                       Args:
                         - my-arg: Thello
+                                  Default: 222
                         - second (integer): Do this
 
                       Look at **this** example:
