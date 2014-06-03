@@ -233,6 +233,8 @@
 (defrule markup-text (* (and markup-text-line (or eol eof)))
   (:function normalize-markup-text))
 
+;; Docstring options
+
 (defrule docstring-option-name (+ (not (or #\: #\; blank tab eol)))
   (:text t))
 
@@ -252,6 +254,8 @@
   (:function (lambda (match)
 	       (make-docstring-options-element :options
 					       (mapcar #'second (nth 1 match))))))
+
+;; References
 
 (defrule upcase-character (not (or blank tab eol
 				   (character-ranges (#\a #\z)))))
@@ -280,6 +284,8 @@
 
 (defrule reference-type (+ (not (or tab blank eol #\))))
   (:text t))
+
+;; Commands
 
 (defrule command (and (or #\\ #\@)
 		      command-name
@@ -330,6 +336,8 @@
     (and (+ (not (or blank tab eol eof
 		     #\, #\; #\. #\: #\= #\]))))
   (:text t))
+
+;; Args
 
 (defrule args-element (and (or "Args:" "Params:")
 			   spacing*
@@ -479,6 +487,7 @@
 
 (defstruct (function-docstring
 	     (:print-function print-function-docstring))
+  options
   short-description
   args
   returns
@@ -487,6 +496,8 @@
 
 (defun print-function-docstring (docstring stream depth)
   (format stream "(:function-docstring")
+  (when (function-docstring-options docstring)
+    (format stream " :options ~A" (function-docstring-options docstring)))
   (when (function-docstring-short-description docstring)
     (format stream " :short-description ~S" (function-docstring-short-description docstring)))
   (when (function-docstring-args docstring)
@@ -503,11 +514,14 @@
 
 (defstruct (class-docstring
 	     (:print-function print-class-docstring))
+  options
   description
   metadata)
 
 (defun print-class-docstring (docstring stream depth)
   (format stream "(:class-docstring")
+  (when (class-docstring-options docstring)
+    (format stream " :options ~A" (class-docstring-options)))
   (when (class-docstring-description docstring)
     (format stream " :description ~S" (class-docstring-description docstring)))
   (when (class-docstring-metadata docstring)
@@ -515,25 +529,32 @@
   (format stream ")"))
 
 (defrule class-docstring
-    (and (? (and spacing* docstring-long-description))
+    (and (? docstring-options)
+	 (? (and spacing* docstring-long-description))
 	 (? (and spacing* docstring-metadata))
 	 spacing*)
   (:function (lambda (match)
-	       (destructuring-bind (description
+	       (destructuring-bind (options
+				    description
 				    metadata
 				    spacing) match
-		 (make-class-docstring :description (second description)
-				       :metadata (second metadata))))))
+		 (make-class-docstring
+		  :options options
+		  :description (second description)
+		  :metadata (second metadata))))))
 
 ;; Package docstring
 
 (defstruct (package-docstring
 	     (:print-function print-package-docstring))
+  options
   description
   metadata)
 
 (defun print-package-docstring (docstring stream depth)
   (format stream "(:package-docstring")
+  (when (package-docstring-options docstring)
+    (format stream " :options ~A" (package-docstring-options docstring)))
   (when (package-docstring-description docstring)
     (format stream " :description ~S" (package-docstring-description docstring)))
   (when (package-docstring-metadata docstring)
@@ -541,15 +562,19 @@
   (format stream ")"))
 
 (defrule package-docstring
-    (and (? (and spacing* docstring-long-description))
+    (and (? docstring-options)
+	 (? (and spacing* docstring-long-description))
 	 (? (and spacing* docstring-metadata))
 	 spacing*)
   (:function (lambda (match)
-	       (destructuring-bind (description
+	       (destructuring-bind (options
+				    description
 				    metadata
 				    spacing) match
-		 (make-package-docstring :description (second description)
-				       :metadata (second metadata))))))
+		 (make-package-docstring
+		  :options options
+		  :description (second description)
+		  :metadata (second metadata))))))
 
 
 ;; Docstring parsing
@@ -559,24 +584,26 @@
 			       docstring-metadata))
 
 (defrule function-docstring
-    (and spacing* docstring-short-description
+    (and (? docstring-options) spacing* docstring-short-description
 	 (? (and spacing* args-element))
 	 (? (and spacing* returns-element))
 	 (? (and spacing* docstring-long-description))
 	 (? (and spacing* docstring-metadata))
 	 spacing*)
   (:function (lambda (match)
-	       (destructuring-bind (sp1 short-description
-					args
-					returns
-					long-description
-					metadata
-					spacing) match
-		 (make-function-docstring :short-description short-description
-					  :args (second args)
-					  :returns (second returns)
-					  :long-description (second long-description)
-					  :metadata (second metadata))))))
+	       (destructuring-bind (options sp1 short-description
+					    args
+					    returns
+					    long-description
+					    metadata
+					    spacing) match
+		 (make-function-docstring
+		  :options options
+		  :short-description short-description
+		  :args (second args)
+		  :returns (second returns)
+		  :long-description (second long-description)
+		  :metadata (second metadata))))))
 
 (defrule docstring-short-description (and (! (or (and spacing docstring-element)
 						 (and eol eol)))

@@ -408,7 +408,7 @@ italic")))
                         - second (integer): Do this
 
                       Look at **this** example:
-                      ``(+ 2 3)``. Also see: `my-func`(function)
+                      ``(+ 2 3)``. Also see: @ref{my-func} (which is a function)
 
                       This is useful for:
 
