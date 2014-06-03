@@ -521,7 +521,7 @@
 (defun print-class-docstring (docstring stream depth)
   (format stream "(:class-docstring")
   (when (class-docstring-options docstring)
-    (format stream " :options ~A" (class-docstring-options)))
+    (format stream " :options ~A" (class-docstring-options docstring)))
   (when (class-docstring-description docstring)
     (format stream " :description ~S" (class-docstring-description docstring)))
   (when (class-docstring-metadata docstring)
