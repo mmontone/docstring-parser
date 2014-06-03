@@ -413,7 +413,18 @@
 (defun print-returns-element (elem stream depth)
   (format stream "(:returns ~S)" (returns-element-returns elem)))
 
-(defrule returns-element (and "Returns:"
+(defun returns-command-p (command)
+  (and (command-element-p command)
+       (equalp (command-element-name command) "returns")))
+
+(defrule returns-element (or command-returns-element
+			     textual-returns-element))
+
+(defrule command-returns-element (returns-command-p command)
+  (:function (lambda (match)
+	       (make-returns-element :returns (first (command-element-args match))))))
+
+(defrule textual-returns-element (and "Returns:"
                               spacing
                               return-description)
   (:function (lambda (match)
