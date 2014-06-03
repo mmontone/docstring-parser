@@ -360,11 +360,24 @@
 
 ;; Args
 
-(defrule args-element (and (or "Args:" "Params:")
-                           spacing*
-                           (+ (and arg-element spacing*)))
+(defrule args-element (or command-args-element
+			  textual-args-element))
+
+(defrule textual-args-element (and (or "Args:" "Params:")
+				   spacing*
+				   (+ (and arg-element spacing*)))
   (:function (lambda (match)
                (make-args-element :args (mapcar #'first (third match))))))
+
+(defrule command-args-element (+ (and (arg-command-p command)
+				      spacing*))
+  (:function (lambda (match)
+	       (flet ((make-arg (command)
+			(make-arg-element :name (command-element-name command)
+					  :type (car (first (command-element-options command)))
+					  :description (first (command-element-args command)))))
+		 (make-args-element :args (mapcar (alexandria:compose #'make-arg #'first)
+						  match))))))
 
 (defrule arg-element (and "-"
                           spacing
