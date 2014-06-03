@@ -149,6 +149,11 @@ italic")))
              * third * third"))
     (parse 'docstring-parser::list-element list)))
 
+(deftest docstring-tags-test ()
+  (is (equalp
+       (parse 'docstring-parser::tags-list "foo, bar, lala")
+       (list "foo" "bar" "lala"))))  
+
 (deftest markup-text-test ()
   (is (tree-equal
        (let ((text "this is a **test**"))
@@ -419,5 +424,8 @@ italic")))
                       Author: Mariano Montone"))
     (parse 'docstring-parser::function-docstring docstring))
 
+  ;; Tags test
+  (let ((docstring "A short description
 
-  )
+                    Tags: foo, bar"))
+    (docstring-parser::parse-function-docstring docstring)))

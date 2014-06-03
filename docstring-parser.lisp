@@ -447,7 +447,8 @@
                                     docstring-todo
                                     docstring-see
                                     docstring-date
-                                    docstring-author)
+                                    docstring-author
+				    docstring-tags)
                                 (or eol eof)))
   (:function (lambda (match)
                (make-docstring-metadata :metadata (mapcar #'second match)))))
@@ -525,6 +526,31 @@
                (cons (second match)
                      (nth 5 match)))))
 
+;; Tags
+
+(defstruct (docstring-tags
+	     (:print-function print-docstring-tags))
+  tags)
+
+(defun print-docstring-tags (tags stream detph)
+  (format stream "(:tags ~{~S~^, ~})" (docstring-tags-tags tags)))
+
+(defrule docstring-tags (and "Tags:" spacing tags-list)
+  (:function (lambda (match)
+	       (make-docstring-tags :tags
+				    (third match)))))
+
+(defrule tags-list (or (and spacing docstring-tag
+			    spacing #\, spacing
+			    tags-list)
+		       (and spacing docstring-tag))
+  (:function (lambda (match)
+	       (cons (second match)
+		     (nth 5 match)))))
+
+(defrule docstring-tag word*)
+
+;; Categories
 
 ;; Docstrings
 
