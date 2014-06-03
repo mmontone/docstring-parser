@@ -850,3 +850,75 @@
    Categories: Parsing toplevel"
   
   (parse 'package-docstring docstring))
+
+;; Metadata accessing
+
+(defun find-metadata (docstring-metadata type &optional (accessor #'identity))
+  (loop for metadata in (docstring-metadata-metadata docstring-metadata)
+       when (typep metadata type)
+       do (return-from find-metadata (funcall accessor metadata))))
+
+
+(defun docstring-metadata-author (docstring-metadata)
+  "Access docstring author
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+ 
+  (find-metadata docstring-metadata
+		 'docstring-author
+		 #'docstring-author-author))
+
+(defun docstring-metadata-todo (docstring-metadata)
+  "Access docstring todo
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+  
+  (find-metadata docstring-metadata 'docstring-todo
+		 #'docstring-todo-todo))
+
+(defun docstring-metadata-tags (docstring-metadata)
+  "Access docstring tags
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+
+  (find-metadata docstring-metadata 'docstring-tags
+		 #'docstring-tags-tags))
+
+(defun docstring-metadata-categories (docstring-metadata)
+  "Access docstring categories
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+
+  (find-metadata docstring-metadata 'docstring-categories
+		 #'docstring-categories-categories))
+
+(defun docstring-metadata-version (docstring-metadata)
+  "Access docstring version
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+
+  (find-metadata docstring-metadata 'docstring-version
+		 #'docstring-version-version))
+
+(defun docstring-metadata-date (docstring-metadata)
+  "Access docstring date
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+
+  (find-metadata docstring-metadata 'docstring-date
+		 #'docstring-date-date))
+
+(defun docstring-metadata-see (docstring-metadata)
+  "Access docstring see
+
+   Tags: accessing, metadata
+   Categories: Metadata accessing"
+
+  (find-metadata docstring-metadata 'docstring-see
+		 #'docstring-see-references))
