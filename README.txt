@@ -1,1 +1,8 @@
-This is the stub README.txt for the "docstring-parser" project.
+A docstring parser for Common Lisp
+
+TODO:
+
+- Simple HTML docstring extraction
+- Emacs mode
+- Solve commands
+- Test on different Common Lisp libraries
