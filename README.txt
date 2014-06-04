@@ -3,7 +3,7 @@ docstring-parser
 
 A Common Lisp docstrings parser
 
-- Library for parsing Common Lisp docstrings
+- Library for parsing Common Lisp documentation strings from functions, classes, packages, etc.
 - It is not a documentation generation system, nor is attached to a particular one. Just parses docstrings.
 - Alternative syntaxes:
   - Lightweight/readable wiki-like syntax
