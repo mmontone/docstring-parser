@@ -249,10 +249,17 @@
     (:it (str (italic-element-text markup)))))
 
 (defmethod render-docstring-markup ((markup ref-element) stream)
+  
   (with-html-output (html stream)
-    (:span :class "reference" (fmt "~A(~A)"
-				   (ref-element-name markup)
-				   (ref-element-type markup)))))
+    (let ((href (format nil "#~A~@[-~A~]"
+			(ref-element-name markup)
+			(ref-element-type markup))))
+    (htm
+     (:a :class "reference"
+	 :href href
+	 (fmt "~A~@[(~A)~]"
+	      (ref-element-name markup)
+	      (ref-element-type markup)))))))
 
 (defmethod render-docstring-markup ((markup email-element) stream)
   (with-html-output (html stream)
