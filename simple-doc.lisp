@@ -319,9 +319,7 @@ body {
     (htm
      (:a :class "reference"
 	 :href href
-	 (fmt "~A~@[(~A)~]"
-	      (ref-element-name markup)
-	      (ref-element-type markup)))))))
+	 (str (ref-element-name markup)))))))
 
 (defmethod render-docstring-markup ((markup email-element) stream)
   (with-html-output (html stream)
