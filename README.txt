@@ -24,7 +24,7 @@ Example:
     
      Look at **this** example:
 
-     ``(my-function "foo" 22)``. 
+     ``(my-function \"foo\" 22)``. 
     
      This is useful for:
         * Testing
