@@ -15,25 +15,27 @@ Example:
     "A //short// **description** goes here.
      
      Args:
-        - foo (string): The **foo** argument
-        - bar (integer): The **bar** argument
-        
-    An optional long description starts here.
-    
-    Look at **this** example:
-    ``(my-function "foo" 22)``. 
-    
-    Also see: `my-func`(function)
+        - foo (string): The **foo** argument.
+        - bar (integer): The **bar** argument.
 
-    This is useful for:
+     Returns: the concatenation of **foo** and **bar**.
+        
+     An optional long description starts here.
+    
+     Look at **this** example:
+
+     ``(my-function "foo" 22)``. 
+    
+     This is useful for:
         * Testing
         * Prototyping
 
-    TODO: do this
-    See: `person`(class), `print`(function)
-    Tags: example, testing
-    Categories: Printing
-    Author: Mariano Montone"
+     TODO: improve.
+     See: `person`(class), `print`(function)
+     Tags: example, testing
+     Categories: Printing
+     Author: Mariano Montone"
     
     (print foo)
-    (print bar))
+    (print bar)
+    (format nil "~A~A" foo bar))
