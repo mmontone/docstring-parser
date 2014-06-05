@@ -232,9 +232,20 @@ body {
 		    (:h1 (str (symbol-name category)))
 		    (loop for name in (names package category)
 			  do
-			     (htm (:div :id (make-unique-name name category)
-					(:h2 (str name))
-					(render-function name stream))))))))))))
+			     (render-category-element category name stream))))))))))
+
+(defmethod render-category-element ((category (eql :function)) function stream)
+  (with-html-output (html stream)
+    (let ((lambda-list (sb-introspect:function-lambda-list function)))
+      (htm (:div :id (make-unique-name function category)
+		 (:h2 (fmt "~A ~A" function lambda-list))
+		 (render-function function stream))))))
+
+(defmethod render-category-element (category thing stream)
+  (with-html-output (html stream)
+    (htm (:div :id (make-unique-name thing category)
+	       (:h2 (str thing))
+	       (:p (str (docs-for thing category)))))))
 
 (defun render-function (function stream)
   (with-html-output (html stream)
