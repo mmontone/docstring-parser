@@ -1,9 +1,5 @@
 # DOCSTRING-PARSER
 
-```
-docstring-parser
-================
-
 A Common Lisp docstrings parser
 
 - Library for parsing Common Lisp documentation strings from functions, classes, packages, etc.
@@ -14,6 +10,7 @@ A Common Lisp docstrings parser
 
 Example:
 
+```
 (defun my-function (foo bar)
     "A //short// **description** goes here.
      
@@ -199,15 +196,3 @@ Validates an url
 
 **Tags**: validation
 **Categories**: utilities, validation
-
-
-## Macros
-## Generic-Functions
-## Slot-Accessors
-## Variables
-## Classs
-### list-element
-Structure documentation
-
-## Conditions
-## Constants
