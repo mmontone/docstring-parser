@@ -1,7 +1,5 @@
 # DOCSTRING-PARSER
 
-A Common Lisp docstrings parser
-
 - Library for parsing Common Lisp documentation strings from functions, classes, packages, etc.
 - It is not a documentation generation system, nor is attached to a particular one. Just parses docstrings.
 - Alternative syntaxes:
@@ -10,7 +8,8 @@ A Common Lisp docstrings parser
 
 Example:
 
-```
+```lisp
+
 (defun my-function (foo bar)
     "A //short// **description** goes here.
      
@@ -43,7 +42,12 @@ Example:
 ```
 
 ## Functions
-### arg-command-p (command)
+### arg-command-p
+
+```lisp
+(command)
+```
+
 Checks whether command is an **arg** command
 
 
@@ -51,7 +55,12 @@ Checks whether command is an **arg** command
 **TODO**: Check that command options and arguments are valid.
 
 
-### docstring-metadata-author (docstring-metadata)
+### docstring-metadata-author
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring author
 
 
@@ -60,7 +69,12 @@ Access docstring author
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-categories (docstring-metadata)
+### docstring-metadata-categories
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring categories
 
 
@@ -69,7 +83,12 @@ Access docstring categories
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-date (docstring-metadata)
+### docstring-metadata-date
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring date
 
 
@@ -78,7 +97,12 @@ Access docstring date
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-see (docstring-metadata)
+### docstring-metadata-see
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring see
 
 
@@ -87,7 +111,12 @@ Access docstring see
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-tags (docstring-metadata)
+### docstring-metadata-tags
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring tags
 
 
@@ -96,7 +125,12 @@ Access docstring tags
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-todo (docstring-metadata)
+### docstring-metadata-todo
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring todo
 
 
@@ -105,7 +139,12 @@ Access docstring todo
 **Categories**: Metadata accessing
 
 
-### docstring-metadata-version (docstring-metadata)
+### docstring-metadata-version
+
+```lisp
+(docstring-metadata)
+```
+
 Access docstring version
 
 
@@ -114,7 +153,12 @@ Access docstring version
 **Categories**: Metadata accessing
 
 
-### parse-class-docstring (docstring)
+### parse-class-docstring
+
+```lisp
+(docstring)
+```
+
 Parses a class or structure docstring
 
 
@@ -125,7 +169,12 @@ Parses a class or structure docstring
 **Categories**: Parsing toplevel
 
 
-### parse-class-slot-docstring (docstring)
+### parse-class-slot-docstring
+
+```lisp
+(docstring)
+```
+
 Parses a class slot documentation string
 
 
@@ -136,7 +185,12 @@ Parses a class slot documentation string
 **Categories**: Parsing toplevel
 
 
-### parse-function-docstring (docstring)
+### parse-function-docstring
+
+```lisp
+(docstring)
+```
+
 Parses a function docstring
 
 
@@ -147,7 +201,12 @@ Parses a function docstring
 **Categories**: Parsing toplevel
 
 
-### parse-package-docstring (docstring)
+### parse-package-docstring
+
+```lisp
+(docstring)
+```
+
 Parses a package docstring
 
 
@@ -158,7 +217,12 @@ Parses a package docstring
 **Categories**: Parsing toplevel
 
 
-### print-list-element (elem stream depth)
+### print-list-element
+
+```lisp
+(elem stream depth)
+```
+
 Print a list element
 
 
@@ -166,7 +230,12 @@ Print a list element
 **Categories**: printing
 
 
-### text (&rest esrap::arguments)
+### text
+
+```lisp
+(&rest esrap::arguments)
+```
+
 Arguments must be strings, or lists whose leaves are strings.
 Catenates all the strings in arguments into a single string.
 
@@ -174,7 +243,12 @@ Catenates all the strings in arguments into a single string.
 
 
 
-### valid-email-address-p (string)
+### valid-email-address-p
+
+```lisp
+(string)
+```
+
 Validates an email address
 
 - **string**: (string) The string to validate
@@ -186,7 +260,12 @@ Validates an email address
 **Categories**: utilities, validation
 
 
-### valid-url-p (string)
+### valid-url-p
+
+```lisp
+(string)
+```
+
 Validates an url
 
 - **string**: (string) The string to validate
